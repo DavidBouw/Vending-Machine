@@ -37,6 +37,7 @@ public class VendingMachineCLI {
 	public static class VendingMachine{
 		public static Item[] inventory;
 		public static Menu menu = new Menu(System.in);
+		private static double totalMoneyInMachine = 0.0;
 		
 		public static Item[] restock(File restockInfoFile) {
 			String itemInfoUnsplit;
@@ -57,11 +58,23 @@ public class VendingMachineCLI {
 			
 			return  tempInventoryList.toArray(new Item[tempInventoryList.size()]);
 		}
+		
+		public static Item findItem(String id) {
+			for(Item entry : inventory) {
+				if(id.equals(entry.getID())) {
+					return entry;
+				}
+			}
+			
+			return null;
+		}
 	}
 	
 	public static void main(String[] args) {
 		File restockFile;
 		int userSelection;
+		String idToBuy;
+		
 		if (args.length > 0) {
 			restockFile = new File(args[0]);
 		}else {
@@ -69,21 +82,39 @@ public class VendingMachineCLI {
 		}
 		VendingMachine.inventory = VendingMachine.restock(restockFile);
 		
-		//for debug purposes
-		
+		//for debug purposes while building menus
 		while(true) {
-			VendingMachine.menu.displayMenuOptions(VendingMachine.menu.getMainMenu());
-			userSelection = VendingMachine.menu.promptUserForSelection(VendingMachine.menu.getMainMenu(), "Your selection: ");
-			System.out.println(userSelection);
+			VendingMachine.menu.displayMenuOptions(VendingMachine.menu
+					.getMainMenu());
+			userSelection = VendingMachine.menu
+					.promptUserForSelection(VendingMachine.menu
+							.getMainMenu(), "Your selection: ");
 			
 			if(userSelection == 1) {
 				for(Item element : VendingMachine.inventory) {
-					System.out.println(element.getID() + "\t\t" + element.getName() + "\t\t" + element.getMessage() + "\t\t" + element.getPrice() + "\t\t" + element.getStock());
+					System.out.println(element.getID() + "\t\t" 
+							+ element.getName() + "\t\t" + element.getMessage() 
+							+ "\t\t" + element.getPrice() + "\t\t" + element.getStock());
 				}
 			} else if (userSelection == 2) {
-				VendingMachine.menu.displayMenuOptions(VendingMachine.menu.getPurchaseMenu());
-				userSelection = VendingMachine.menu.promptUserForSelection(VendingMachine.menu.getPurchaseMenu(), "Your selection: ");
-				System.out.println(userSelection);
+				VendingMachine.menu.displayMenuOptions(VendingMachine
+						.menu.getPurchaseMenu());
+				System.out.println("Current Money Provided: $" + VendingMachine.totalMoneyInMachine);;
+				userSelection = VendingMachine.menu
+						.promptUserForSelection(VendingMachine.menu
+								.getPurchaseMenu(), "Your selection: ");
+				switch(userSelection) {
+					case 1:
+						VendingMachine.totalMoneyInMachine += VendingMachine.menu.promptUserForMoney(
+								VendingMachine.totalMoneyInMachine);
+						break;
+					case 2:
+						idToBuy = VendingMachine.menu.promptUserForItemID(
+								VendingMachine.inventory
+								, VendingMachine.totalMoneyInMachine);
+						System.out.println(VendingMachine.findItem(idToBuy).getMessage());
+						break;
+				}
 			}
 		}
 		
