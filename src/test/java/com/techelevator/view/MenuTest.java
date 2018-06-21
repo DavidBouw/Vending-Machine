@@ -23,7 +23,7 @@ public class MenuTest {
 		Object[] options = new Object[] {  new Integer(3), "Blind", "Mice" };
 		Menu menu = getMenuForTesting();
 		
-		menu.getChoiceFromOptions(options);
+		//menu.getChoiceFromOptions(options);
 		
 		String expected = "\n"+
 				 		  "1) "+options[0].toString()+"\n" + 
